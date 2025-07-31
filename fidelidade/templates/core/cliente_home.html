@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title">Minhas Pontuações</h5>
+            </div>
+            <div class="card-body">
+                {% if pontuacoes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Promoção</th>
+                                    <th>Comércio</th>
+                                    <th>Pontos</th>
+                                    <th>Prêmio</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pontuacao in pontuacoes %}
+                                    <tr>
+                                        <td>{{ pontuacao.promocao.nome }}</td>
+                                        <td>{{ pontuacao.promocao.comercio.nome_fantasia }}</td>
+                                        <td>
+                                            {{ pontuacao.pontos }}/{{ pontuacao.promocao.pontos_necessarios }}
+                                            <div class="progress mt-1">
+                                                <div class="progress-bar" role="progressbar" 
+                                                     style="width: {% widthratio pontuacao.pontos pontuacao.promocao.pontos_necessarios 100 %}%">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{ pontuacao.promocao.premio }}</td>
+                                        <td>
+                                            {% if pontuacao.pontos >= pontuacao.promocao.pontos_necessarios and not pontuacao.resgatado %}
+                                                <a href="{% url 'resgatar_premio' pontuacao.id %}" class="btn btn-sm btn-success">
+                                                    Resgatar
+                                                </a>
+                                            {% elif pontuacao.resgatado %}
+                                                <span class="badge bg-info">Resgatado</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">Você ainda não participa de nenhuma promoção.</p>
+                    <a href="{% url 'ler_qr_code' %}" class="btn btn-primary">Ler QR Code</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

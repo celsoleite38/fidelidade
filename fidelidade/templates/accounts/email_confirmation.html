@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmação de Email</title>
+</head>
+<body>
+    <h2>Olá {{ user.username }},</h2>
+    <p>Por favor, clique no link abaixo para confirmar seu cadastro:</p>
+    <p><a href="{{ confirm_url }}">{{ confirm_url }}</a></p>
+    <p>Se você não solicitou este cadastro, por favor ignore este email.</p>
+    <p>Atenciosamente,<br>Equipe Fidelidade</p>
+</body>
+</html>

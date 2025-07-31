@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Meu Comércio</h5>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">{{ comercio.nome_fantasia }}</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong>Razão Social:</strong> {{ comercio.razao_social }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Endereço:</strong> {{ comercio.endereco }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Cidade/UF:</strong> {{ comercio.cidade }}/{{ comercio.estado }}
+                    </li>
+                </ul>
+                <div class="mt-3">
+                    <a href="{% url 'editar_comercio' %}" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Minhas Promoções</h5>
+                    <a href="{% url 'criar_promocao' %}" class="btn btn-light btn-sm">
+                        <i class="bi bi-plus-lg"></i> Nova Promoção
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if promocoes %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Prêmio</th>
+                                    <th>Pontos</th>
+                                    <th>Status</th>
+                                    <th>QR Code</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for promocao in promocoes %}
+                                    <tr>
+                                        <td>{{ promocao.nome }}</td>
+                                        <td>{{ promocao.premio }}</td>
+                                        <td>{{ promocao.pontos_necessarios }}</td>
+                                        <td>
+                                            {% if promocao.ativa %}
+                                                <span class="badge bg-success">Ativa</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inativa</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if promocao.qr_code %}
+                                                <a href="{{ promocao.qr_code.url }}" download class="btn btn-sm btn-outline-primary">
+                                                    <i class="bi bi-download"></i> Baixar
+                                                </a>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <!-- Botão Visualizar -->
+                                                <a href="{% url 'detalhes_promocao' promocao.id %}" class="btn btn-outline-secondary" title="Visualizar">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                
+                                                <!-- Botão Editar -->
+                                                <a href="{% url 'editar_promocao' promocao.id %}" class="btn btn-outline-primary" title="Editar">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                
+                                                <!-- Botão Excluir (usando formulário para segurança) -->
+                                                <form method="post" action="{% url 'excluir_promocao' promocao.id %}" class="d-inline">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-outline-danger" title="Excluir"
+                                                            onclick="return confirm('Tem certeza que deseja excluir esta promoção?')">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-tags" style="font-size: 3rem; color: #6c757d;"></i>
+                        <h5 class="mt-3">Nenhuma promoção cadastrada</h5>
+                        <p class="text-muted">Crie sua primeira promoção para começar a fidelizar clientes!</p>
+                        <a href="{% url 'criar_promocao' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-lg"></i> Criar Promoção
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
