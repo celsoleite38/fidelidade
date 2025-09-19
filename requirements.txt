@@ -1,0 +1,16 @@
+annotated-types==0.7.0
+asgiref==3.9.1
+crispy-bootstrap5==2025.6
+Django==5.2.4
+django-crispy-forms==2.4
+django-qr-code==4.2.0
+django-tables2==2.7.5
+pillow==11.3.0
+pydantic==2.11.7
+pydantic_core==2.33.2
+python-dotenv==1.1.1
+qrcode==8.2
+segno==1.6.6
+sqlparse==0.5.3
+typing-inspection==0.4.1
+typing_extensions==4.14.1
