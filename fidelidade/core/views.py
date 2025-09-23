@@ -56,6 +56,11 @@ def criar_promocao(request):
         if form.is_valid():
             promocao = form.save(commit=False)
             promocao.comercio = comercio
+            promocao.save()  # Salva primeiro para ter um ID
+            
+            print(f"=== GERANDO QR CODE ===")
+            print(f"Promoção ID: {promocao.id}")
+            print(f"Promoção Nome: {promocao.nome}")
             
             # Gerar QR Code
             qr = qrcode.QRCode(
@@ -67,6 +72,8 @@ def criar_promocao(request):
             
             # Dados únicos para o QR Code
             qr_data = f"promocao:{promocao.id}:{random.randint(1000, 9999)}"
+            print(f"QR Data gerado: '{qr_data}'")
+            
             qr.add_data(qr_data)
             qr.make(fit=True)
             
@@ -80,6 +87,9 @@ def criar_promocao(request):
             
             promocao.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=False)
             promocao.save()
+            
+            print(f"QR Code salvo: {promocao.qr_code}")
+            print("=== QR CODE GERADO COM SUCESSO ===")
             
             messages.success(request, 'Promoção criada com sucesso!')
             return redirect('home')
@@ -124,40 +134,91 @@ def detalhes_promocao(request, pk):
         'pontuacoes': pontuacoes
     })
 
+import logging
+logger = logging.getLogger(__name__)
+
 @login_required
 def ler_qr_code(request):
     if request.user.tipo_usuario != 'cliente':
-        return redirect('home')
+        return JsonResponse({'success': False, 'error': 'Apenas clientes podem ler QR Codes'})
     
     if request.method == 'POST':
-        qr_data = request.POST.get('qr_data')
+        qr_data = request.POST.get('qr_data', '').strip()
+        
+        print(f"=== NOVA LEITURA ===")
+        print(f"Usuário: {request.user.username}")
+        print(f"QR Code: {qr_data}")
         
         try:
-            # O formato é: promocao:comercio_id:random_code
-            _, comercio_id, _ = qr_data.split(':')
-            promocao = Promocao.objects.get(comercio__id=comercio_id)
+            # Verificar formato básico
+            if not qr_data or 'promocao:' not in qr_data:
+                return JsonResponse({'success': False, 'error': 'QR Code inválido ou vazio'})
+            
+            parts = qr_data.split(':')
+            if len(parts) < 2:
+                return JsonResponse({'success': False, 'error': 'Formato de QR Code inválido'})
+            
+            promocao_id = parts[1].strip()
+            if not promocao_id.isdigit():
+                return JsonResponse({'success': False, 'error': 'ID da promoção inválido'})
+            
+            # Buscar promoção
+            promocao = Promocao.objects.get(id=int(promocao_id), ativa=True)
             cliente = Cliente.objects.get(usuario=request.user)
             
-            # Criar ou atualizar pontuação
+            # Verificar datas
+            hoje = timezone.now().date()
+            if promocao.data_inicio > hoje:
+                return JsonResponse({'success': False, 'error': f'Promoção inicia em {promocao.data_inicio}'})
+            
+            if promocao.data_fim < hoje:
+                return JsonResponse({'success': False, 'error': f'Promoção expirou em {promocao.data_fim}'})
+            
+            # Verificar se já existe pontuação
             pontuacao, created = Pontuacao.objects.get_or_create(
                 cliente=cliente,
                 promocao=promocao,
                 defaults={'pontos': 1}
             )
             
+            pontos_adicionados = 0
+            
             if not created:
+                if pontuacao.resgatado:
+                    return JsonResponse({'success': False, 'error': 'Prêmio já resgatado para esta promoção'})
+                
                 if pontuacao.pontos < promocao.pontos_necessarios:
                     pontuacao.pontos += 1
                     pontuacao.save()
+                    pontos_adicionados = 1
+                else:
+                    return JsonResponse({'success': False, 'error': 'Pontuação máxima já atingida'})
+            else:
+                pontos_adicionados = 1
+            
+            print(f"Pontos adicionados: {pontos_adicionados}")
+            print(f"Total: {pontuacao.pontos}/{promocao.pontos_necessarios}")
             
             return JsonResponse({
                 'success': True,
+                'promocao_nome': promocao.nome,
                 'pontos': pontuacao.pontos,
                 'necessarios': promocao.pontos_necessarios,
                 'premio': promocao.premio,
+                'comercio': promocao.comercio.nome_fantasia,
+                'pontos_adicionados': pontos_adicionados,
+                'message': f'✅ {pontos_adicionados} ponto(s) adicionado(s) com sucesso!'
             })
-        except (ValueError, Promocao.DoesNotExist):
-            return JsonResponse({'success': False, 'error': 'QR Code inválido'})
+            
+        except Promocao.DoesNotExist:
+            print("ERRO: Promoção não encontrada")
+            return JsonResponse({'success': False, 'error': 'Promoção não encontrada ou inativa'})
+        except Cliente.DoesNotExist:
+            print("ERRO: Cliente não encontrado")
+            return JsonResponse({'success': False, 'error': 'Perfil de cliente não encontrado'})
+        except Exception as e:
+            print(f"ERRO: {e}")
+            return JsonResponse({'success': False, 'error': f'Erro interno: {str(e)}'})
     
     return render(request, 'core/ler_qr_code.html')
 
