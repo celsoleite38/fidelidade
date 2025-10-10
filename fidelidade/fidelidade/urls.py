@@ -36,4 +36,8 @@ urlpatterns = [
     path('promocao/editar/<int:pk>/', core_views.editar_promocao, name='editar_promocao'),
     path('promocao/excluir/<int:pk>/', excluir_promocao, name='excluir_promocao'),
     
+    # Resgate
+    path('painel-resgate/', core_views.painel_resgate_comerciante, name='painel_resgate'),
+    path('resgatar-premio-comerciante/', core_views.resgatar_premio_comerciante, name='resgatar_premio_comerciante'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,38 +12,56 @@
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead>
-                                <tr>
-                                    <th>Promoção</th>
-                                    <th>Comércio</th>
-                                    <th>Pontos</th>
-                                    <th>Prêmio</th>
-                                    <th>Ações</th>
-                                </tr>
+                                
                             </thead>
                             <tbody>
                                 {% for pontuacao in pontuacoes %}
-                                    <tr>
-                                        <td>{{ pontuacao.promocao.nome }}</td>
-                                        <td>{{ pontuacao.promocao.comercio.nome_fantasia }}</td>
-                                        <td>
-                                            {{ pontuacao.pontos }}/{{ pontuacao.promocao.pontos_necessarios }}
-                                            <div class="progress mt-1">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ pontuacao.promocao.nome }}</h5>
+                                        <p class="card-text">
+                                            <strong>Comércio:</strong> {{ pontuacao.promocao.comercio.nome_fantasia }}<br>
+                                            <strong>Endereço:</strong> {{ pontuacao.promocao.comercio.endereco }}<br>
+                                            <strong>Pontos:</strong> {{ pontuacao.pontos }}/{{ pontuacao.promocao.pontos_necessarios }}<br>
+                                            <strong>Prêmio:</strong> {{ pontuacao.promocao.premio }}
+                                        </p>
+                                        
+                                        {% if pontuacao.pontos >= pontuacao.promocao.pontos_necessarios %}
+                                            {% if pontuacao.resgatado %}
+                                                <div class="alert alert-success">
+                                                    <strong>✅ Prêmio Resgatado</strong><br>
+                                                    Resgatado em: {{ pontuacao.data_resgate|date:"d/m/yy H:i" }}
+                                                </div>
+                                            {% else %}
+                                                <div class="alert alert-warning">
+                                                    <strong>🎉 Parabéns! Você atingiu a meta!</strong><br>
+                                                    <strong>Seu código de resgate:</strong>
+                                                    <div class="text-center my-3">
+                                                        <span class="display-6 font-weight-bold text-primary">
+                                                            {{ pontuacao.codigo_resgate }}
+                                                        </span>
+                                                    </div>
+                                                    <small>
+                                                        📍 Dirija-se ao estabelecimento:<br>
+                                                        <strong>{{ pontuacao.promocao.comercio.nome_fantasia }}</strong><br>
+                                                        {{ pontuacao.promocao.comercio.endereco }}<br>
+                                                        Informe este código para resgatar seu prêmio.
+                                                    </small>
+                                                </div>
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="progress">
                                                 <div class="progress-bar" role="progressbar" 
-                                                     style="width: {% widthratio pontuacao.pontos pontuacao.promocao.pontos_necessarios 100 %}%">
+                                                    style="width: {% widthratio pontuacao.pontos pontuacao.promocao.pontos_necessarios 100 %}%">
+                                                    {{ pontuacao.pontos }}/{{ pontuacao.promocao.pontos_necessarios }}
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td>{{ pontuacao.promocao.premio }}</td>
-                                        <td>
-                                            {% if pontuacao.pontos >= pontuacao.promocao.pontos_necessarios and not pontuacao.resgatado %}
-                                                <a href="{% url 'resgatar_premio' pontuacao.id %}" class="btn btn-sm btn-success">
-                                                    Resgatar
-                                                </a>
-                                            {% elif pontuacao.resgatado %}
-                                                <span class="badge bg-info">Resgatado</span>
-                                            {% endif %}
-                                        </td>
-                                    </tr>
+                                            <small class="text-muted">
+                                                Faltam {{ pontuacao.pontos_faltantes }} pontos para o prêmio
+                                            </small>
+                                        {% endif %}
+                                    </div>
+                                </div>
                                 {% endfor %}
                             </tbody>
                         </table>

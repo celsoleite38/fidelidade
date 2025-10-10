@@ -1,115 +1,172 @@
+<!-- templates/core/comerciante_home.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-4">
-        <div class="card mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="card-title mb-0">Meu Comércio</h5>
-            </div>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>🏪 Painel do Comerciante</h1>
+    <div>
+        <!-- BOTÃO PARA O PAINEL DE RESGATE -->
+        <a href="{% url 'painel_resgate' %}" class="btn btn-warning me-2">
+            🎁 Painel de Resgate
+            {% if resgates_pendentes > 0 %}
+                <span class="badge bg-danger">{{ resgates_pendentes }}</span>
+            {% endif %}
+        </a>
+        <a href="{% url 'criar_promocao' %}" class="btn btn-primary">
+            ➕ Nova Promoção
+        </a>
+    </div>
+</div>
+
+<!-- Estatísticas Rápidas (opcional) -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card text-center">
             <div class="card-body">
-                <h5 class="card-title">{{ comercio.nome_fantasia }}</h5>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <strong>Razão Social:</strong> {{ comercio.razao_social }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Endereço:</strong> {{ comercio.endereco }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Cidade/UF:</strong> {{ comercio.cidade }}/{{ comercio.estado }}
-                    </li>
-                </ul>
-                <div class="mt-3">
-                    <a href="{% url 'editar_comercio' %}" class="btn btn-outline-primary w-100">
-                        <i class="bi bi-pencil"></i> Editar
-                    </a>
-                </div>
+                <h3>{{ promocoes.count }}</h3>
+                <p class="text-muted">Promoções Ativas</p>
             </div>
         </div>
     </div>
-    
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">Minhas Promoções</h5>
-                    <a href="{% url 'criar_promocao' %}" class="btn btn-light btn-sm">
-                        <i class="bi bi-plus-lg"></i> Nova Promoção
-                    </a>
+    <div class="col-md-6">
+        <div class="card text-center">
+            <div class="card-body">
+                <h3>{{ resgates_pendentes }}</h3>
+                <p class="text-muted">Resgates Pendentes</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+            <!-- Informações do Comércio -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">📊 Meu Estabelecimento</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Nome:</strong> {{ comercio.nome_fantasia }}</p>
+                            <p><strong>CNPJ:</strong> {{ comercio.cnpj }}</p>
+                            <p><strong>Telefone:</strong> {{ comercio.telefone }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Endereço:</strong> {{ comercio.endereco }}</p>
+                            
+                            <a href="{% url 'editar_comercio' %}" class="btn btn-outline-secondary btn-sm">
+                                ✏️ Editar Dados
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="card-body">
-                {% if promocoes %}
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Prêmio</th>
-                                    <th>Pontos</th>
-                                    <th>Status</th>
-                                    <th>QR Code</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for promocao in promocoes %}
+
+            <!-- Estatísticas Rápidas -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3>{{ promocoes.count }}</h3>
+                            <p class="text-muted">Promoções Ativas</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3>{{ total_pontuacoes }}</h3>
+                            <p class="text-muted">Total de Pontuações</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3>{{ resgates_pendentes }}</h3>
+                            <p class="text-muted">Resgates Pendentes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Promoções -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">🎯 Minhas Promoções</h5>
+                    <a href="{% url 'criar_promocao' %}" class="btn btn-primary btn-sm">
+                        ➕ Nova Promoção
+                    </a>
+                </div>
+                <div class="card-body">
+                    {% if promocoes %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
                                     <tr>
-                                        <td>{{ promocao.nome }}</td>
-                                        <td>{{ promocao.premio }}</td>
-                                        <td>{{ promocao.pontos_necessarios }}</td>
+                                        <th>Nome</th>
+                                        <th>Prêmio</th>
+                                        <th>Pontos Necessários</th>
+                                        <th>Status</th>
+                                        <th>QR Codes</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for promocao in promocoes %}
+                                    <tr>
                                         <td>
-                                            {% if promocao.ativa %}
-                                                <span class="badge bg-success">Ativa</span>
-                                            {% else %}
+                                            <strong>{{ promocao.nome }}</strong>
+                                            {% if not promocao.ativa %}
                                                 <span class="badge bg-secondary">Inativa</span>
                                             {% endif %}
                                         </td>
+                                        <td>{{ promocao.premio }}</td>
+                                        <td>{{ promocao.pontos_necessarios }}</td>
+                                        <td>
+                                            <span class="badge {% if promocao.ativa %}bg-success{% else %}bg-secondary{% endif %}">
+                                                {{ promocao.ativa|yesno:"Ativa,Inativa" }}
+                                            </span>
+                                        </td>
                                         <td>
                                             {% if promocao.qr_code %}
-                                                <a href="{{ promocao.qr_code.url }}" download class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-download"></i> Baixar
+                                                <a href="{{ promocao.qr_code.url }}" download class="btn btn-outline-success btn-sm">
+                                                    📥 Baixar QR
                                                 </a>
+                                            {% else %}
+                                                <span class="text-muted">Sem QR</span>
                                             {% endif %}
                                         </td>
                                         <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <!-- Botão Visualizar -->
-                                                <a href="{% url 'detalhes_promocao' promocao.id %}" class="btn btn-outline-secondary" title="Visualizar">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                
-                                                <!-- Botão Editar -->
-                                                <a href="{% url 'editar_promocao' promocao.id %}" class="btn btn-outline-primary" title="Editar">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                
-                                                <!-- Botão Excluir (usando formulário para segurança) -->
-                                                <form method="post" action="{% url 'excluir_promocao' promocao.id %}" class="d-inline">
-                                                    {% csrf_token %}
-                                                    <button type="submit" class="btn btn-outline-danger" title="Excluir"
-                                                            onclick="return confirm('Tem certeza que deseja excluir esta promoção?')">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            <a href="{% url 'detalhes_promocao' promocao.id %}" class="btn btn-info btn-sm">
+                                                📊 Detalhes
+                                            </a>
+                                            <a href="{% url 'editar_promocao' promocao.id %}" class="btn btn-warning btn-sm">
+                                                ✏️ Editar
+                                            </a>
+                                            <form method="post" action="{% url 'excluir_promocao' promocao.id %}" class="d-inline">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir esta promoção?')">
+                                                    🗑️ Excluir
+                                                </button>
+                                            </form>
                                         </td>
                                     </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                {% else %}
-                    <div class="text-center py-4">
-                        <i class="bi bi-tags" style="font-size: 3rem; color: #6c757d;"></i>
-                        <h5 class="mt-3">Nenhuma promoção cadastrada</h5>
-                        <p class="text-muted">Crie sua primeira promoção para começar a fidelizar clientes!</p>
-                        <a href="{% url 'criar_promocao' %}" class="btn btn-primary">
-                            <i class="bi bi-plus-lg"></i> Criar Promoção
-                        </a>
-                    </div>
-                {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted">Nenhuma promoção cadastrada ainda.</p>
+                            <a href="{% url 'criar_promocao' %}" class="btn btn-primary">
+                                ➕ Criar Primeira Promoção
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

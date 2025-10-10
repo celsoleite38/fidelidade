@@ -26,7 +26,7 @@
             flex-direction: column;
             width: 100%;
             max-width: 100%;
-            padding: 0;
+            padding: 20px;
         }
         
         header {
@@ -34,7 +34,8 @@
             padding: 20px;
             background-color: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin-bottom: 20px;
             position: relative;
         }
         
@@ -50,44 +51,38 @@
         }
         
         .scanner-container {
-            flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            width: 100%;
+            gap: 20px;
         }
         
         #video-container {
-            position: relative;
             width: 100%;
-            max-width: 800px;
-            height: 60vh;
-            margin: 0 auto 30px;
+            max-width: 500px;
+            height: 400px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.2);
+            position: relative;
         }
         
-        #qr-video {
+        #video-preview {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
         
-        #scan-region {
+        .scan-overlay {
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 70%;
-            height: 70%;
             transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
             border: 3px dashed rgba(255, 255, 255, 0.7);
             border-radius: 12px;
-            box-sizing: border-box;
-            box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.5);
             pointer-events: none;
         }
         
@@ -96,14 +91,12 @@
             flex-wrap: wrap;
             gap: 15px;
             justify-content: center;
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 800px;
+            margin: 20px 0;
         }
         
         button {
-            padding: 14px 28px;
-            font-size: 1.1rem;
+            padding: 12px 24px;
+            font-size: 1rem;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -113,32 +106,17 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            min-width: 180px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            min-width: 160px;
         }
         
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        button:active {
-            transform: translateY(1px);
-        }
-        
-        #start-scan {
+        #start-button {
             background-color: #28a745;
             color: white;
         }
         
-        #stop-scan {
+        #stop-button {
             background-color: #dc3545;
             color: white;
-        }
-        
-        #flash-button {
-            background-color: #ffc107;
-            color: #212529;
         }
         
         #back-button {
@@ -148,8 +126,6 @@
             left: 20px;
             top: 50%;
             transform: translateY(-50%);
-            min-width: 120px;
-            padding: 10px 20px;
         }
         
         #result-container {
@@ -158,49 +134,69 @@
             border-radius: 12px;
             padding: 20px;
             width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
+            max-width: 500px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 20px;
         }
         
-        #result {
-            font-size: 1.3rem;
-            font-weight: 600;
-            min-height: 30px;
-            padding: 10px;
-            border-radius: 8px;
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-        
-        .scanning {
-            color: #ffc107;
-            animation: pulse 1.5s infinite;
-        }
-        
-        .success {
-            color: #28a745;
-        }
-        
-        .error {
-            color: #dc3545;
-        }
-        
-        @keyframes pulse {
-            0% { opacity: 0.7; }
-            50% { opacity: 1; }
-            100% { opacity: 0.7; }
-        }
-        
-        footer {
+        .upload-section {
+            margin-top: 20px;
             text-align: center;
             padding: 20px;
-            background-color: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: auto;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
         }
-        
+
+        #qr-image-input {
+            display: none;
+        }
+
+        #upload-button {
+            background-color: #ffc107;
+            color: #212529;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #upload-result {
+            margin-top: 15px;
+            min-height: 60px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .alert-info {
+            background: rgba(23, 162, 184, 0.2);
+            border: 1px solid #17a2b8;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.2);
+            border: 1px solid #28a745;
+        }
+
+        .alert-warning {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+        }
+
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+        }
+
         .status {
             display: flex;
             justify-content: center;
@@ -209,54 +205,55 @@
             font-size: 0.9rem;
             opacity: 0.8;
         }
-        
-        .promocao-info {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: left;
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+            opacity: 0.7;
         }
-        
-        .promocao-info h3 {
-            margin-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            padding-bottom: 5px;
+
+        .camera-permission {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid #ffc107;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        
-        .progresso {
-            height: 20px;
-            background-color: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
+
+        .manual-input {
+            margin-top: 20px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        #manual-code {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            width: 100%;
+            max-width: 300px;
             margin: 10px 0;
-            overflow: hidden;
         }
-        
-        .progresso-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #28a745, #20c997);
-            border-radius: 10px;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
+
+        #manual-code::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
-        
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 1.8rem;
             }
             
             #video-container {
-                height: 50vh;
-            }
-            
-            button {
-                min-width: 160px;
-                padding: 12px 20px;
-                font-size: 1rem;
+                height: 300px;
             }
             
             #back-button {
@@ -276,378 +273,425 @@
                 align-items: center;
             }
         }
-        
-        @media (max-width: 480px) {
-            h1 {
-                font-size: 1.5rem;
-            }
-            
-            #video-container {
-                height: 40vh;
-            }
-            
-            button {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <button id="back-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-                </svg>
-                Voltar
+            <button id="back-button" onclick="window.location.href='{% url 'home' %}'">
+                ← Voltar para Home
             </button>
-            <h1>Leitor de QR Code Fidelity</h1>
-            <p class="subtitle">Posicione o código QR dentro da área destacada para registrar pontos</p>
+            <h1>Leitor de QR Code</h1>
+            <p class="subtitle">Escaneie o código QR ou faça upload de uma imagem</p>
         </header>
-        
-            <button onclick="reiniciarScanner()" class="btn btn-outline-primary btn-sm">
-                <i class="bi bi-arrow-repeat me-1"></i>Ler Outro QR Code
-            </button>
+
+        <!-- Aviso de Permissão -->
+        <div id="permission-alert" class="camera-permission">
+            <h3>📷 Sistema de Leitura de QR Code</h3>
+            <p>Escolha uma das opções abaixo para ler QR Codes:</p>
+        </div>
         
         <div class="scanner-container">
+            <!-- Área da Câmera -->
             <div id="video-container">
-                <video id="qr-video"></video>
-                <div id="scan-region"></div>
+                <video id="video-preview"></video>
+                <div class="scan-overlay"></div>
             </div>
-                      
+            
             <div class="controls">
-                <button id="start-scan">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm11.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-1zM5 5.5A.5.5 0 0 1 5.5 5h1a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-3z"/>
-                        <path d="M0 6.5A.5.5 0 0 1 .5 6h2a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-1z"/>
-                    </svg>
-                    Iniciar Lei1tura
+                <button id="start-button">
+                    📷 Iniciar Câmera
                 </button>
-                <button id="stop-scan">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/>
-                    </svg>
-                    Parar Leitura
+                <button id="stop-button" style="display: none;">
+                    ⏹ Parar Câmera
                 </button>
-                <button id="flash-button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                        <path d="M9.5 1.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                        <path d="M7 12.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4zm1 1v3h3v-3h-3z"/>
-                        <path d="M13.5 7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                        <path d="M1.5 7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                    </svg>
-                    Ligar/Desligar Flash
-                </button>
-                
             </div>
-             
             
             <div id="result-container">
-                <p>Resultado: <span id="result" class="scanning">Lendo...</span></p>
-                <div id="promocao-info" class="promocao-info" style="display: none;">
-                    <!-- Aqui serão exibidas as informações da promoção -->
+                <div class="alert alert-info">
+                    <h5>👆 Clique em "Iniciar Câmera" para começar</h5>
+                    <p>Ou use uma das alternativas abaixo</p>
                 </div>
+            </div>
+            
+            <!-- Upload de Imagem -->
+            <div class="upload-section">
+                <h3>📁 Opção 1: Upload de Imagem</h3>
+                <p>Faça upload de uma imagem contendo o QR Code</p>
+                
+                <input type="file" id="qr-image-input" accept="image/*">
+                <button id="upload-button" onclick="document.getElementById('qr-image-input').click()">
+                    📁 Selecionar Imagem
+                </button>
+                
+                <div id="upload-result"></div>
+            </div>
+
+            <!-- Entrada Manual -->
+            <div class="manual-input">
+                <h3>⌨️ Opção 2: Entrada Manual</h3>
+                <p>Digite o código do QR Code manualmente</p>
+                
+                <input type="text" id="manual-code" placeholder="Digite o código do QR Code (ex: promocao:123)">
+                <button onclick="processarCodigoManual()" style="background-color: #6f42c1; color: white;">
+                    ✅ Enviar Código
+                </button>
             </div>
         </div>
         
         <footer>
             <p>&copy; 2025 Fidelize. Todos os direitos reservados.</p>
             <div class="status">
-                <span id="camera-status">Câmera: Ativa</span>
-                <span id="flash-status">Flash: Desligado</span>
+                <span id="camera-status">Câmera: Aguardando</span>
             </div>
         </footer>
     </div>
 
-    <script type="module">
-        import QrScanner from "https://cdn.jsdelivr.net/npm/qr-scanner@1.4.1/qr-scanner.min.js";
+    <!-- Incluir a biblioteca jsQR para decodificação de imagens -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 
-        const video = document.getElementById('qr-video');
-        const resultSpan = document.getElementById('result');
-        const startScanBtn = document.getElementById('start-scan');
-        const stopScanBtn = document.getElementById('stop-scan');
-        const flashButton = document.getElementById('flash-button');
-        const backButton = document.getElementById('back-button');
+    <script>
+        // Variáveis globais
+        let stream = null;
+        let qrCodeProcessado = false;
+        let scanInterval = null;
+
+        // Elementos DOM
+        const video = document.getElementById('video-preview');
+        const startButton = document.getElementById('start-button');
+        const stopButton = document.getElementById('stop-button');
+        const resultContainer = document.getElementById('result-container');
         const cameraStatus = document.getElementById('camera-status');
-        const flashStatus = document.getElementById('flash-status');
-        const promocaoInfo = document.getElementById('promocao-info');
+        const qrImageInput = document.getElementById('qr-image-input');
+        const uploadResult = document.getElementById('upload-result');
+        const permissionAlert = document.getElementById('permission-alert');
 
-        let qrScanner;
-        let qrCodeRegistrado = false;
+        // Verificar suporte à câmera
+        function checkCameraSupport() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                updateResult(`
+                    <h5>❌ Navegador não suportado</h5>
+                    <p>Seu navegador não suporta acesso à câmera.</p>
+                    <p>Use o upload de imagem ou a entrada manual.</p>
+                `, 'error');
+                startButton.disabled = true;
+                startButton.innerHTML = '❌ Navegador não suportado';
+                return false;
+            }
+            return true;
+        }
 
-        // Simulação de banco de dados de promoções
-        const promocoes = {
-            "PROMO001": { nome: "Promoção de Verão", pontos: 10, necessarios: 50, premio: "Desconto de 20%" },
-            "PROMO002": { nome: "Fidelidade Ouro", pontos: 15, necessarios: 100, premio: "Brinde Exclusivo" },
-            "PROMO003": { nome: "Cliente Premium", pontos: 25, necessarios: 200, premio: "Jantar para dois" },
-            "PROMO123": { nome: "Teste de Sistema", pontos: 5, necessarios: 10, premio: "Café grátis" }
-        };
+        // Iniciar câmera
+        async function startCamera() {
+            try {
+                if (!checkCameraSupport()) return;
 
-        // Simulação de pontos do usuário (em um sistema real, isso viria do backend)
-        let pontosUsuario = {
-            "PROMO001": 30,
-            "PROMO002": 75,
-            "PROMO003": 150,
-            "PROMO123": 5
-        };
-
-        function initScanner() {
-            qrScanner = new QrScanner(video, result => {
-                if (qrCodeRegistrado) return; // Evita múltiplos registros
+                updateResult('<h5>⏳ Iniciando câmera...</h5>', 'info');
                 
-                const qrData = result.data;
-                resultSpan.textContent = qrData;
-                resultSpan.classList.remove('scanning');
+                // Solicitar acesso à câmera
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
                 
-                // Verificar se é um QR Code válido para promoção
-                if (promocoes[qrData]) {
-                    registrarPontos(qrData);
+                video.srcObject = stream;
+                video.play();
+                
+                startButton.style.display = 'none';
+                stopButton.style.display = 'flex';
+                cameraStatus.textContent = 'Câmera: Ativa';
+                permissionAlert.style.display = 'none';
+                
+                updateResult(`
+                    <h5>✅ Câmera ativada!</h5>
+                    <p>Posicione o QR Code na área destacada</p>
+                    <p><small>A leitura automática está ativa</small></p>
+                `, 'success');
+                
+                // Iniciar detecção de QR codes
+                startQRDetection();
+                
+            } catch (error) {
+                console.error("Erro ao acessar câmera:", error);
+                
+                if (error.name === 'NotAllowedError') {
+                    updateResult(`
+                        <h5>❌ Permissão negada</h5>
+                        <p>Você negou o acesso à câmera.</p>
+                        <p>Use o upload de imagem ou a entrada manual.</p>
+                    `, 'error');
+                } else if (error.name === 'NotFoundError') {
+                    updateResult(`
+                        <h5>❌ Câmera não encontrada</h5>
+                        <p>Nenhuma câmera disponível foi encontrada.</p>
+                    `, 'error');
                 } else {
-                    resultSpan.textContent = "QR Code inválido";
-                    resultSpan.classList.add('error');
+                    updateResult(`
+                        <h5>❌ Erro na câmera</h5>
+                        <p>${error.message}</p>
+                    `, 'error');
+                }
+                
+                cameraStatus.textContent = 'Câmera: Erro';
+            }
+        }
+
+        // Parar câmera
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+            }
+            
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            
+            video.srcObject = null;
+            startButton.style.display = 'flex';
+            stopButton.style.display = 'none';
+            cameraStatus.textContent = 'Câmera: Parada';
+            
+            updateResult(`
+                <h5>⏸ Câmera parada</h5>
+                <p>Clique em "Iniciar Câmera" para continuar</p>
+            `, 'info');
+        }
+
+        // Iniciar detecção de QR codes
+        function startQRDetection() {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            scanInterval = setInterval(() => {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    
+                    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+                    
+                    if (code && !qrCodeProcessado) {
+                        console.log("QR Code detectado:", code.data);
+                        handleScan(code.data);
+                    }
+                }
+            }, 500); // Verificar a cada 500ms
+        }
+
+        // Processar QR Code
+        function handleScan(qrData) {
+            if (qrCodeProcessado) {
+                console.log("QR Code já está sendo processado...");
+                return;
+            }
+            
+            qrCodeProcessado = true;
+            
+            updateResult(`
+                <h5>⏳ Processando QR Code...</h5>
+                <p>Aguarde enquanto registramos seus pontos</p>
+            `, 'info');
+            
+            // Parar temporariamente a detecção
+            if (scanInterval) {
+                clearInterval(scanInterval);
+                scanInterval = null;
+            }
+            
+            // Enviar para o backend
+            const formData = new FormData();
+            formData.append('qr_data', qrData);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+            
+            fetch("{% url 'ler_qr_code' %}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                console.log("Status HTTP:", response.status);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Resposta do servidor:", data);
+                
+                if (data.success) {
+                    updateResult(`
+                        <h5>✅ ${data.message || 'Pontos registrados!'}</h5>
+                        <p><strong>Promoção:</strong> ${data.promocao_nome}</p>
+                        <p><strong>Comércio:</strong> ${data.comercio}</p>
+                        <p><strong>Pontos:</strong> ${data.pontos}/${data.necessarios}</p>
+                        <p><strong>Prêmio:</strong> ${data.premio}</p>
+                    `, 'success');
+                    
+                    // Parar câmera após sucesso
                     setTimeout(() => {
-                        resultSpan.textContent = "Lendo...";
-                        resultSpan.classList.remove('error');
-                        resultSpan.classList.add('scanning');
-                        qrCodeRegistrado = false;
+                        stopCamera();
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 2000);
+                    }, 3000);
+                    
+                } else {
+                    updateResult(`
+                        <h5>⚠️ ${data.error}</h5>
+                        <p>Tente novamente ou use outra opção</p>
+                    `, 'warning');
+                    
+                    // Reiniciar detecção após 3 segundos
+                    setTimeout(() => {
+                        qrCodeProcessado = false;
+                        if (stream) {
+                            startQRDetection();
+                        }
+                        updateResult('<h5>📱 Pronto para nova leitura</h5>', 'info');
                     }, 3000);
                 }
-            }, {
-                highlightScanRegion: true,
-                highlightCodeOutline: true,
-            });
-
-            startScanBtn.addEventListener('click', () => {
-                qrScanner.start().then(() => {
-                    resultSpan.textContent = 'Lendo...';
-                    resultSpan.classList.add('scanning');
-                    resultSpan.classList.remove('success', 'error');
-                    cameraStatus.textContent = 'Câmera: Ativa';
-                    qrCodeRegistrado = false;
-                    promocaoInfo.style.display = 'none';
-                });
-            });
-
-            stopScanBtn.addEventListener('click', () => {
-                qrScanner.stop();
-                resultSpan.textContent = 'Leitura Parada';
-                resultSpan.classList.remove('scanning', 'success', 'error');
-                resultSpan.style.color = '#dc3545';
-                cameraStatus.textContent = 'Câmera: Inativa';
-            });
-
-            flashButton.addEventListener('click', async () => {
-                try {
-                    await qrScanner.toggleFlash();
-                    if (qrScanner.isFlashOn) {
-                        flashButton.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M9.5 1.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                                <path d="M7 12.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4zm1 1v3h3v-3h-3z"/>
-                                <path d="M13.5 7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                                <path d="M1.5 7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                            </svg>
-                            Desligar Flash
-                        `;
-                        flashStatus.textContent = 'Flash: Ligado';
-                    } else {
-                        flashButton.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M9.5 1.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                                <path d="M7 12.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4zm1 1v3h3v-3h-3z"/>
-                                <path d="M13.5 7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                                <path d="M1.5 7a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h4zm-1 1h-3v3h3v-3z"/>
-                            </svg>
-                            Ligar Flash
-                        `;
-                        flashStatus.textContent = 'Flash: Desligado';
-                    }
-                } catch (e) {
-                    console.error("Erro ao controlar o flash:", e);
-                    resultSpan.textContent = "Flash não disponível";
-                    resultSpan.classList.remove('scanning');
-                    resultSpan.classList.add('error');
-                }
-            });
-
-            // Botão Voltar
-            backButton.addEventListener('click', () => {
-                if (qrScanner) {
-                    qrScanner.stop();
-                }
-                // Redirecionar para a página anterior
-                window.location.href = "{% url 'home' %}"; // Altere para a URL desejada
-                // Ou usar history.back() para voltar à página anterior
-                // history.back();
-            });
-
-            // Iniciar a leitura automaticamente ao carregar a página
-            qrScanner.start().then(() => {
-                resultSpan.textContent = 'Lendo...';
-                resultSpan.classList.add('scanning');
-                cameraStatus.textContent = 'Câmera: Ativa';
-            });
-        }
-
-        function registrarPontos(codigoPromocao) {
-            qrCodeRegistrado = true;
-            
-            const promocao = promocoes[codigoPromocao];
-            
-            // Simular requisição AJAX para o backend
-            setTimeout(() => {
-                // Em um sistema real, aqui seria uma chamada fetch para o backend
-                // fetch('/api/registrar-pontos', { ... })
+            })
+            .catch(error => {
+                console.error('Erro na requisição:', error);
+                updateResult(`
+                    <h5>❌ Erro de conexão</h5>
+                    <p>Verifique sua internet e tente novamente</p>
+                `, 'error');
                 
-                // Simular resposta do servidor
-                pontosUsuario[codigoPromocao] += promocao.pontos;
-                const novosPontos = pontosUsuario[codigoPromocao];
-                const necessarios = promocao.necessarios;
-                const percentual = Math.min(100, (novosPontos / necessarios) * 100);
-                
-                // Exibir resultado
-                resultSpan.textContent = `Pontos registrados com sucesso!`;
-                resultSpan.classList.add('success');
-                
-                // Exibir informações da promoção
-                promocaoInfo.innerHTML = `
-                    <h3>${promocao.nome}</h3>
-                    <p>Pontos adicionados: <strong>${promocao.pontos}</strong></p>
-                    <p>Seu progresso:</p>
-                    <div class="progresso">
-                        <div class="progresso-bar" style="width: ${percentual}%">
-                            ${novosPontos}/${necessarios} (${Math.round(percentual)}%)
-                        </div>
-                    </div>
-                    <p>Prêmio: <strong>${promocao.premio}</strong></p>
-                    ${novosPontos >= necessarios ? 
-                        '<p class="success"><strong>Parabéns! Você atingiu a meta e pode resgatar seu prêmio!</strong></p>' : 
-                        `<p>Faltam <strong>${necessarios - novosPontos}</strong> pontos para resgatar o prêmio</p>`
-                    }
-                `;
-                promocaoInfo.style.display = 'block';
-                
-                // Prevenir nova leitura por 5 segundos
+                // Reiniciar detecção após 3 segundos
                 setTimeout(() => {
-                    resultSpan.textContent = "Lendo...";
-                    resultSpan.classList.remove('success');
-                    resultSpan.classList.add('scanning');
-                    qrCodeRegistrado = false;
-                }, 5000);
-                
-            }, 1000);
+                    qrCodeProcessado = false;
+                    if (stream) {
+                        startQRDetection();
+                    }
+                    updateResult('<h5>📱 Pronto para nova leitura</h5>', 'info');
+                }, 3000);
+            });
         }
 
-        let qrCodeProcessado = false;
-let tempoBloqueio = 5000; // 5 segundos
-
-function handleScan(qrData) {
-    console.log("QR Code lido:", qrData);
-    
-    // Prevenir múltiplas leituras
-    if (qrCodeProcessado) {
-        console.log("QR Code já está sendo processado...");
-        return;
-    }
-    
-    qrCodeProcessado = true;
-    
-    // Mostrar loading
-    resultContainer.innerHTML = `
-        <div class="alert alert-info">
-            <h5 class="alert-heading">⏳ Processando QR Code...</h5>
-            <p>Aguarde enquanto registramos seus pontos</p>
-        </div>
-    `;
-    
-    fetch("{% url 'ler_qr_code' %}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRFToken': '{{ csrf_token }}'
-        },
-        body: `qr_data=${encodeURIComponent(qrData)}`
-    })
-    .then(response => {
-        console.log("Status HTTP:", response.status);
-        if (!response.ok) {
-            throw new Error(`Erro HTTP: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Resposta do servidor:", data);
-        
-        if (data.success) {
-            resultContainer.innerHTML = `
-                <div class="alert alert-success">
-                    <h5 class="alert-heading">✅ ${data.message || 'Pontos registrados!'}</h5>
-                    <p class="mb-1"><strong>Promoção:</strong> ${data.promocao_nome}</p>
-                    <p class="mb-1"><strong>Comércio:</strong> ${data.comercio}</p>
-                    <p class="mb-1"><strong>Pontos:</strong> ${data.pontos}/${data.necessarios}</p>
-                    <p class="mb-0"><strong>Prêmio:</strong> ${data.premio}</p>
-                </div>
-            `;
+        // Processar upload de imagem
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
             
-            // Atualizar a página após 3 segundos para ver as pontuações
-            setTimeout(() => {
-                window.location.reload();
-            }, 3000);
+            // Verificar se é uma imagem
+            if (!file.type.startsWith('image/')) {
+                uploadResult.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5>❌ Arquivo inválido</h5>
+                        <p>Por favor, selecione uma imagem (JPG, PNG, etc.)</p>
+                    </div>
+                `;
+                event.target.value = '';
+                return;
+            }
             
-        } else {
-            resultContainer.innerHTML = `
-                <div class="alert alert-danger">
-                    <h5 class="alert-heading">❌ ${data.error || 'Erro'}</h5>
-                    <p>Tente novamente com um QR Code válido</p>
-                </div>
-            `;
+            const formData = new FormData();
+            formData.append('qr_image', file);
+            formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
             
-            // Liberar para nova leitura mais rápido em caso de erro
-            tempoBloqueio = 2000;
-        }
-    })
-    .catch(error => {
-        console.error('Erro na requisição:', error);
-        resultContainer.innerHTML = `
-            <div class="alert alert-danger">
-                <h5 class="alert-heading">❌ Erro de Conexão</h5>
-                <p>Verifique sua conexão e tente novamente</p>
-                <small>Detalhes: ${error.message}</small>
-            </div>
-        `;
-    })
-    .finally(() => {
-        // Liberar para nova leitura após o tempo de bloqueio
-        setTimeout(() => {
-            qrCodeProcessado = false;
-            resultContainer.innerHTML = `
+            uploadResult.innerHTML = `
                 <div class="alert alert-info">
-                    <h5 class="alert-heading">📱 Pronto para nova leitura</h5>
-                    <p>Posicione outro QR Code na câmera</p>
+                    <h5>⏳ Processando imagem...</h5>
+                    <p>Aguarde enquanto analisamos o QR Code</p>
                 </div>
             `;
-            console.log("Scanner liberado para nova leitura");
-        }, tempoBloqueio);
-    });
-}
+            
+            fetch("{% url 'ler_qr_code' %}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Resposta do upload:", data);
+                
+                if (data.success) {
+                    uploadResult.innerHTML = `
+                        <div class="alert alert-success">
+                            <h5>✅ ${data.message}</h5>
+                            <p><strong>Promoção:</strong> ${data.promocao_nome}</p>
+                            <p><strong>Comércio:</strong> ${data.comercio}</p>
+                            <p><strong>Pontos:</strong> ${data.pontos}/${data.necessarios}</p>
+                            <p><strong>Prêmio:</strong> ${data.premio}</p>
+                        </div>
+                    `;
+                    
+                    event.target.value = '';
+                    
+                    // Atualizar página após 3 segundos
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 3000);
+                } else {
+                    uploadResult.innerHTML = `
+                        <div class="alert alert-danger">
+                            <h5>❌ ${data.error}</h5>
+                            <p>Tente com outra imagem ou verifique se o QR code é válido</p>
+                        </div>
+                    `;
+                    event.target.value = '';
+                }
+            })
+            .catch(error => {
+                console.error('Erro no upload:', error);
+                uploadResult.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5>❌ Erro no processamento</h5>
+                        <p>Verifique sua conexão e tente novamente</p>
+                    <small>${error.message}</small>
+                    </div>
+                `;
+                event.target.value = '';
+            });
+        }
 
-    function reiniciarScanner() {
-    qrCodeProcessado = false;
-    document.getElementById('reload-container').style.display = 'none';
-    resultContainer.innerHTML = `
-        <div class="alert alert-info">
-            <i class="bi bi-qr-code me-2"></i>Pronto para nova leitura
-        </div>
-    `;
-    
-    // Reiniciar o scanner se estiver parado
-    if (qrScanner) {
-        qrScanner.start();
-    }
-}
-        // Chamar initScanner quando o DOM estiver completamente carregado
-        document.addEventListener('DOMContentLoaded', initScanner);
+        // Processar código manual
+        function processarCodigoManual() {
+            const manualCode = document.getElementById('manual-code').value.trim();
+            
+            if (!manualCode) {
+                alert('Por favor, digite um código');
+                return;
+            }
+            
+            handleScan(manualCode);
+            document.getElementById('manual-code').value = '';
+        }
+
+        // Atualizar resultado
+        function updateResult(message, type) {
+            const alertClass = {
+                'info': 'alert-info',
+                'success': 'alert-success',
+                'warning': 'alert-warning',
+                'error': 'alert-danger'
+            }[type] || 'alert-info';
+            
+            resultContainer.innerHTML = `
+                <div class="alert ${alertClass}">
+                    ${message}
+                </div>
+            `;
+        }
+
+        // Event listeners
+        startButton.addEventListener('click', startCamera);
+        stopButton.addEventListener('click', stopCamera);
+        qrImageInput.addEventListener('change', handleImageUpload);
+
+        // Debug
+        console.log("CSRF Token presente:", !!'{{ csrf_token }}');
+        console.log("URL do endpoint:", "{% url 'ler_qr_code' %}");
     </script>
 </body>
 </html>

@@ -50,16 +50,25 @@ class Cliente(models.Model):
         verbose_name_plural = 'Clientes'
 
 class Pontuacao(models.Model):
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, related_name='pontuacoes')
-    promocao = models.ForeignKey(Promocao, on_delete=models.CASCADE, related_name='pontuacoes')
-    pontos = models.PositiveIntegerField(default=0)
-    data_ultima_atualizacao = models.DateTimeField(auto_now=True)
+    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    promocao = models.ForeignKey(Promocao, on_delete=models.CASCADE)
+    pontos = models.IntegerField(default=0)
     resgatado = models.BooleanField(default=False)
-    
+    data_resgate = models.DateTimeField(null=True, blank=True)
+    codigo_resgate = models.CharField(max_length=5, blank=True, null=True, unique=True)
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    def gerar_codigo_resgate(self):
+        import random
+        import string
+        
+        # Gerar código único de 5 dígitos alfanumérico
+        while True:
+            codigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+            if not Pontuacao.objects.filter(codigo_resgate=codigo).exists():
+                self.codigo_resgate = codigo
+                break
+        return codigo
+
     def __str__(self):
-        return f"{self.cliente} - {self.promocao}: {self.pontos}/{self.promocao.pontos_necessarios}"
-    
-    class Meta:
-        verbose_name = 'Pontuação'
-        verbose_name_plural = 'Pontuações'
-        unique_together = ('cliente', 'promocao')
+        return f"{self.cliente.usuario.username} - {self.promocao.nome} ({self.pontos} pts)"
