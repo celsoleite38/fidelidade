@@ -77,4 +77,5 @@ def confirm_email(request, uidb64, token):
 
 def custom_logout(request):
     logout(request)
+    messages.success(request, 'Logout realizado com sucesso!')
     return redirect('login')

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Fidelize - Sistema de Recompensas{% endblock %}</title>
+    <title>{% block title %}Fidelity - Sistema de Recompensas{% endblock %}</title>
     
     <!-- Google Fonts - Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -23,13 +23,12 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <!-- Navbar com Gradiente -->
-    <nav class="navbar navbar-expand-lg navbar-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="{% url 'home' %}">
-                <img src="{% static 'img/logo2.png' %}" alt="estrela" width="54" height="54">
-                <span>Fidelity</span>
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'home' %}">
+                <img src="{% static 'img/logo2.png' %}" alt="estrela" width="80" height="80" class="me-2">
+                <span class="fw-bold">Fidelity - Sistema de Recompensas</span>
             </a>
-            
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
@@ -59,16 +58,53 @@
                     {% endif %}
                 </ul>
                 
-                <ul class="navbar-nav">
+                <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle me-1"></i> {{ user.name|default:user.username }}
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle me-2"></i>
+                                {{ user.first_name|default:user.username }}
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="{% url 'home' %}"><i class="bi bi-house me-2"></i> Início</a></li>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li>
+                                    <div class="dropdown-header">
+                                        <strong>{{ user.first_name|default:user.username }}</strong>
+                                        <br>
+                                        <small class="text-muted">{{ user.email }}</small>
+                                    </div>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Sair</a></li>
+                                
+                                {% if user.tipo_usuario == 'comerciante' %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'editar_comercio' %}">
+                                            <i class="bi bi-shop me-2"></i> Meu Comércio
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'ler_qr_code' %}">
+                                            <i class="bi bi-qr-code-scan me-2"></i> Ler QR Code
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                <li>
+                                    <a class="dropdown-item" href="#">
+                                        <i class="bi bi-person me-2"></i> Meu Perfil
+                                    </a>
+                                </li>
+                                
+                                <li><hr class="dropdown-divider"></li>
+                                
+                                <li>
+                                    <form method="post" action="{% url 'logout' %}" class="d-inline w-100">
+                                        {% csrf_token %}
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Sair
+                                        </button>
+                                    </form>
+                                </li>
                             </ul>
                         </li>
                     {% else %}
@@ -78,7 +114,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-register" href="{% url 'register_cliente' %}">
+                            <a class="nav-link btn btn-outline-light ms-2" href="{% url 'register_cliente' %}">
                                 <i class="bi bi-person-plus me-1"></i> Cadastre-se
                             </a>
                         </li>
@@ -91,7 +127,15 @@
     <!-- Conteúdo Principal -->
     <main class="flex-grow-1">
         <div class="container my-4">
-            {% include 'partials/messages.html' %}
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
+            {% endif %}
+            
             {% block content %}{% endblock %}
         </div>
     </main>
@@ -101,7 +145,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                    <p class="mb-0">&copy; {% now "Y" %} Fidelize. Todos os direitos reservados.</p>
+                    <p class="mb-0">&copy; {% now "Y" %} Fidelity. Todos os direitos reservados.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <a href="#" class="text-white me-3"><i class="bi bi-envelope fs-5"></i></a>

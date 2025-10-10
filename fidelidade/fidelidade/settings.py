@@ -155,3 +155,17 @@ LOGOUT_REDIRECT_URL = 'login'  # Para onde redirecionar após logout
 
 CSRF_COOKIE_SECURE = False  # True em produção com HTTPS
 CSRF_COOKIE_HTTPONLY = True
+
+# Configurações de sessão
+SESSION_COOKIE_AGE = 1209600  # 2 semanas em segundos
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Mensagens
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.DEBUG: 'secondary',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger',
+}

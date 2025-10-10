@@ -9,7 +9,7 @@ class CustomUser(AbstractUser):
         ('comerciante', 'Comerciante'),
     ]
     
-    tipo_usuario = models.CharField(max_length=11, choices=TIPO_USUARIO_CHOICES)
+    tipo_usuario = models.CharField(max_length=20, choices=TIPO_USUARIO_CHOICES)
     cpf = models.CharField(max_length=14, blank=True, null=True, unique=True)
     cnpj = models.CharField(max_length=18, blank=True, null=True, unique=True)
     telefone = models.CharField(max_length=15, blank=True, null=True)
