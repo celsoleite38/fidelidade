@@ -71,7 +71,7 @@ def criar_promocao(request):
             )
             
             # Dados únicos para o QR Code
-            qr_data = f"promocao:{promocao.id}:{random.randint(1000, 9999)}"
+            qr_data = f"promocao:{promocao.id}"
             print(f"QR Data gerado: '{qr_data}'")
             
             qr.add_data(qr_data)
@@ -151,7 +151,7 @@ def ler_qr_code(request):
         
         try:
             # Verificar formato básico
-            if not qr_data or 'promocao:' not in qr_data:
+            if not qr_data or not qr_data.startswith('promocao:'):
                 return JsonResponse({'success': False, 'error': 'QR Code inválido ou vazio'})
             
             parts = qr_data.split(':')
@@ -159,6 +159,8 @@ def ler_qr_code(request):
                 return JsonResponse({'success': False, 'error': 'Formato de QR Code inválido'})
             
             promocao_id = parts[1].strip()
+            codigo_extra = parts[2].strip() if len(parts) >= 3 else None  # captura o código extra se houver
+            
             if not promocao_id.isdigit():
                 return JsonResponse({'success': False, 'error': 'ID da promoção inválido'})
             
@@ -199,7 +201,7 @@ def ler_qr_code(request):
             print(f"Pontos adicionados: {pontos_adicionados}")
             print(f"Total: {pontuacao.pontos}/{promocao.pontos_necessarios}")
             
-            return JsonResponse({
+            response = {
                 'success': True,
                 'promocao_nome': promocao.nome,
                 'pontos': pontuacao.pontos,
@@ -208,7 +210,13 @@ def ler_qr_code(request):
                 'comercio': promocao.comercio.nome_fantasia,
                 'pontos_adicionados': pontos_adicionados,
                 'message': f'✅ {pontos_adicionados} ponto(s) adicionado(s) com sucesso!'
-            })
+            }
+
+            # opcional: incluir o código extra na resposta se existir
+            if codigo_extra:
+                response['codigo_extra'] = codigo_extra
+            
+            return JsonResponse(response)
             
         except Promocao.DoesNotExist:
             print("ERRO: Promoção não encontrada")
