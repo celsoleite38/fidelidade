@@ -279,7 +279,7 @@
     <div class="container">
         <header>
             <button id="back-button" onclick="window.location.href='{% url 'home' %}'">
-                ← Voltar para Home
+                ← Voltar
             </button>
             <h1>Leitor de QR Code</h1>
             <p class="subtitle">Escaneie o código QR ou faça upload de uma imagem</p>
@@ -314,19 +314,7 @@
                 </div>
             </div>
             
-            <!-- Upload de Imagem -->
-            <div class="upload-section">
-                <h3>📁 Opção 1: Upload de Imagem</h3>
-                <p>Faça upload de uma imagem contendo o QR Code</p>
-                
-                <input type="file" id="qr-image-input" accept="image/*">
-                <button id="upload-button" onclick="document.getElementById('qr-image-input').click()">
-                    📁 Selecionar Imagem
-                </button>
-                
-                <div id="upload-result"></div>
-            </div>
-
+            
             <!-- Entrada Manual -->
             <div class="manual-input">
                 <h3>⌨️ Opção 2: Entrada Manual</h3>
