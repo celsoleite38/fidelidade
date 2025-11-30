@@ -35,7 +35,7 @@
         </div>
 
         <div class="col-md-6">
-            <!-- Lista de Clientes com Prêmios Disponíveis -->
+            <!-- Lista de Clientes com Prêmios Disponíveis (SEM MOSTRAR O CÓDIGO) -->
             <div class="card">
                 <div class="card-header bg-warning">
                     <h5 class="mb-0">📋 Prêmios Aguardando Resgate</h5>
@@ -47,10 +47,14 @@
                                 <div class="list-group-item">
                                     <div class="d-flex w-100 justify-content-between">
                                         <h6 class="mb-1">{{ pontuacao.cliente.usuario.get_full_name|default:pontuacao.cliente.usuario.username }}</h6>
-                                        <span class="badge bg-primary">{{ pontuacao.codigo_resgate }}</span>
+                                        <span class="badge bg-info">Pronto para Resgate</span>
                                     </div>
                                     <p class="mb-1"><strong>{{ pontuacao.promocao.nome }}</strong></p>
-                                    <small>Prêmio: {{ pontuacao.promocao.premio }}</small>
+                                    <small class="text-muted">Prêmio: {{ pontuacao.promocao.premio }}</small>
+                                    <br>
+                                    <small class="text-muted">
+                                        ⚠️ Peça ao cliente o código de 5 dígitos para resgatar
+                                    </small>
                                 </div>
                             {% endfor %}
                         </div>
@@ -100,9 +104,12 @@
                 resultado.innerHTML = `
                     <div class="alert alert-success">
                         <h5>✅ ${data.message}</h5>
+                        <p><strong>Código:</strong> <span class="badge bg-primary">${data.codigo_resgate}</span></p>
                         <p><strong>Cliente:</strong> ${data.cliente}</p>
                         <p><strong>Promoção:</strong> ${data.promocao}</p>
                         <p><strong>Prêmio:</strong> ${data.premio}</p>
+                        <hr>
+                        <p class="mb-0"><strong>🎉 Resgate confirmado com sucesso!</strong></p>
                     </div>
                 `;
                 document.getElementById('codigo-resgate').value = '';
@@ -110,7 +117,7 @@
                 // Recarregar a página após 3 segundos para atualizar a lista
                 setTimeout(() => {
                     window.location.reload();
-                }, 3000);
+                }, 10000);
             } else {
                 resultado.innerHTML = `
                     <div class="alert alert-danger">

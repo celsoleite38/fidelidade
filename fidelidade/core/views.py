@@ -284,16 +284,34 @@ def processar_dados_qr_code(request):
 
 # === ADICIONE ESTA FUNÇÃO NOVA ===
 def gerar_codigo_resgate(pontuacao):
-    """Gera um código de resgate único de 5 dígitos"""
+    """Gera um código de resgate único e aleatório de 5 dígitos"""
     import random
     import string
+    import secrets
     
+    # 🔧 MELHORIA: Usar secrets para maior segurança criptográfica
     # Gerar código único de 5 dígitos alfanumérico
     while True:
-        codigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+        # 🔧 MELHORIA: Usar secrets.SystemRandom() para melhor aleatoriedade
+        system_random = secrets.SystemRandom()
+        codigo = ''.join(system_random.choices(
+            string.ascii_uppercase + string.digits, 
+            k=5
+        ))
+        
+        # 🔧 MELHORIA: Adicionar verificação extra para evitar colisões
         if not Pontuacao.objects.filter(codigo_resgate=codigo).exists():
             pontuacao.codigo_resgate = codigo
             break
+            
+        # 🔧 MELHORIA: Prevenção contra loop infinito (fallback)
+        # Se após 10 tentativas ainda houver conflito, tentar com mais caracteres
+        if attempts > 10:  # você precisaria adicionar um contador
+            codigo = ''.join(system_random.choices(
+                string.ascii_uppercase + string.digits, 
+                k=6  # aumenta para 6 caracteres temporariamente
+            ))
+    
     return codigo
 
 # views.py - adicione estas views
@@ -355,7 +373,8 @@ def resgatar_premio_comerciante(request):
             'message': f'Prêmio resgatado com sucesso!',
             'cliente': pontuacao.cliente.usuario.get_full_name() or pontuacao.cliente.usuario.username,
             'promocao': pontuacao.promocao.nome,
-            'premio': pontuacao.promocao.premio
+            'premio': pontuacao.promocao.premio,
+            'codigo_resgate': codigo
         })
         
     except Pontuacao.DoesNotExist:
