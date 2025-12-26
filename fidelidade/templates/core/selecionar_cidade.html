@@ -1,0 +1,34 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Selecione sua Cidade</h3>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted">Para ver as promoções e comércios da sua região, por favor informe sua cidade.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="cidade" class="form-label">Cidade</label>
+                            <select name="cidade" id="cidade" class="form-select" required>
+                                <option value="" selected disabled>Escolha uma cidade...</option>
+                                {% for cidade in cidades %}
+                                    <option value="{{ cidade.id }}">{{ cidade.nome }} - {{ cidade.estado }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Confirmar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
 #from fidelidade.accounts import models
-from .models import Comercio, Promocao, Cliente, Pontuacao
+from .models import Comercio, Promocao, Cliente, Pontuacao, Cidade
 from .forms import PromocaoForm, ComercioForm
 import qr_code
 from io import BytesIO
@@ -18,8 +18,23 @@ import qrcode
 from django.db.models import F, Count, Q
 
 @login_required
+def selecionar_cidade(request):
+    if request.method == 'POST':
+        cidade_id = request.POST.get('cidade')
+        if cidade_id:
+            request.session['cidade_id'] = cidade_id
+            return redirect('home')
+    
+    cidades = Cidade.objects.all().order_by('nome')
+    return render(request, 'core/selecionar_cidade.html', {'cidades': cidades})
 
+@login_required
 def home(request):
+    # Se for cliente, verificar se selecionou a cidade
+    if request.user.tipo_usuario == 'cliente':
+        if 'cidade_id' not in request.session:
+            return redirect('selecionar_cidade')
+
     if request.user.tipo_usuario == 'comerciante':
         try:
             comercio = Comercio.objects.get(usuario=request.user)
@@ -52,23 +67,45 @@ def home(request):
             })
         except Comercio.DoesNotExist:
             # Se for comerciante mas não tiver comércio cadastrado
-            return redirect('editar_comercio')
+            if request.method == 'POST':
+                form = ComercioForm(request.POST)
+                if form.is_valid():
+                    comercio = form.save(commit=False)
+                    comercio.usuario = request.user
+                    comercio.save()
+                    messages.success(request, 'Comércio cadastrado com sucesso!')
+                    return redirect('home')
+            else:
+                form = ComercioForm()
+            return render(request, 'core/editar_comercio.html', {'form': form, 'novo_cadastro': True})
     else:
-        # Para clientes (mantido igual)
+        # Para clientes
         try:
             cliente = Cliente.objects.get(usuario=request.user)
+            cidade_id = request.session.get('cidade_id')
+            cidade = Cidade.objects.get(id=cidade_id)
+            
+            # Pontuações que o cliente já tem
             pontuacoes = Pontuacao.objects.filter(cliente=cliente)
+            
+            # Promoções disponíveis na cidade selecionada que o cliente ainda não participa
+            # ou que ele já participa mas ainda estão ativas
+            promocoes_cidade = Promocao.objects.filter(
+                comercio__cidade=cidade,
+                ativa=True
+            ).exclude(id__in=pontuacoes.values_list('promocao_id', flat=True))
+
             return render(request, 'core/cliente_home.html', {
                 'cliente': cliente,
+                'cidade': cidade,
                 'pontuacoes': pontuacoes,
+                'promocoes_cidade': promocoes_cidade,
             })
         except Cliente.DoesNotExist:
-            # Se não tiver perfil de cliente ainda, cria um
             cliente = Cliente.objects.create(usuario=request.user)
-            return render(request, 'core/cliente_home.html', {
-                'cliente': cliente,
-                'pontuacoes': [],
-            })
+            return redirect('home')
+        except Cidade.DoesNotExist:
+            return redirect('selecionar_cidade')
 
 @login_required
 def criar_promocao(request):
@@ -495,7 +532,10 @@ def editar_comercio(request):
     if request.user.tipo_usuario != 'comerciante':
         return redirect('home')
     
-    comercio = Comercio.objects.get(usuario=request.user)
+    try:
+        comercio = Comercio.objects.get(usuario=request.user)
+    except Comercio.DoesNotExist:
+        return redirect('home') # A home já trata a criação
     
     if request.method == 'POST':
         form = ComercioForm(request.POST, instance=comercio)

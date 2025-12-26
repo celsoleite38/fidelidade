@@ -27,6 +27,7 @@ urlpatterns = [
     
     # Core
     path('', core_views.home, name='home'),
+    path('selecionar-cidade/', core_views.selecionar_cidade, name='selecionar_cidade'),
     path('criar-promocao/', core_views.criar_promocao, name='criar_promocao'),
     path('ler-qr-code/', core_views.ler_qr_code, name='ler_qr_code'),
     path('resgatar-premio/<int:pontuacao_id>/', core_views.resgatar_premio, name='resgatar_premio'),

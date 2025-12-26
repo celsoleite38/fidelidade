@@ -1,9 +1,14 @@
 from django.contrib import admin
-from .models import Comercio, Promocao, Cliente, Pontuacao
+from .models import Comercio, Promocao, Cliente, Pontuacao, Cidade
+
+@admin.register(Cidade)
+class CidadeAdmin(admin.ModelAdmin):
+    list_display = ('nome', 'estado')
+    search_fields = ('nome', 'estado')
 
 @admin.register(Comercio)
 class ComercioAdmin(admin.ModelAdmin):
-    list_display = ('nome_fantasia', 'razao_social', 'cidade', 'estado')
+    list_display = ('nome_fantasia', 'razao_social', 'cidade', 'cnpj', 'data_cadastro')
     search_fields = ('nome_fantasia', 'razao_social', 'cnpj')
 
 @admin.register(Promocao)

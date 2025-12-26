@@ -2,13 +2,27 @@ from django.db import models
 from accounts.models import CustomUser
 from django.core.validators import MinValueValidator
 
+class Cidade(models.Model):
+    nome = models.CharField(max_length=100)
+    estado = models.CharField(max_length=2)
+
+    def __str__(self):
+        return f"{self.nome} - {self.estado}"
+
+    class Meta:
+        verbose_name = 'Cidade'
+        verbose_name_plural = 'Cidades'
+        unique_together = ('nome', 'estado')
+
 class Comercio(models.Model):
     usuario = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='comercio')
     nome_fantasia = models.CharField(max_length=100)
     razao_social = models.CharField(max_length=100)
     endereco = models.CharField(max_length=200)
-    cidade = models.CharField(max_length=100)
-    estado = models.CharField(max_length=2)
+    cidade = models.ForeignKey(Cidade, on_delete=models.PROTECT, related_name='comercios')
+    telefone = models.CharField(max_length=15, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    cnpj = models.CharField(max_length=18, unique=True, blank=True, null=True)
     data_cadastro = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

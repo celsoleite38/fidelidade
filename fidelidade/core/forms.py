@@ -2,6 +2,7 @@ from django import forms
 from core.models import Promocao, Comercio
 from django.core.validators import MinValueValidator
 from datetime import date
+from .models import Comercio, Cidade
 
 class PromocaoForm(forms.ModelForm):
     class Meta:
@@ -28,4 +29,9 @@ class PromocaoForm(forms.ModelForm):
 class ComercioForm(forms.ModelForm):
     class Meta:
         model = Comercio
-        fields = ['nome_fantasia', 'razao_social', 'endereco', 'cidade', 'estado']
+        fields = ['nome_fantasia', 'razao_social', 'endereco', 'cidade', 'telefone', 'email', 'cnpj']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['cidade'].empty_label = "Selecione uma cidade"
+        self.fields['cidade'].queryset = Cidade.objects.all().order_by('nome')
