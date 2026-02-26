@@ -39,7 +39,8 @@ class Promocao(models.Model):
     pontos_necessarios = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     premio = models.CharField(max_length=100)
     data_inicio = models.DateField()
-    data_fim = models.DateField()
+    data_fim = models.DateField(null=True, blank=True)
+    sem_prazo = models.BooleanField(default=False, verbose_name="Sem data de validade")
     ativa = models.BooleanField(default=True)
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
     

@@ -7,14 +7,11 @@ from django.views.decorators.http import require_POST
 #from fidelidade.accounts import models
 from .models import Comercio, Promocao, Cliente, Pontuacao, Cidade
 from .forms import PromocaoForm, ComercioForm
-import qr_code
 from io import BytesIO
 from django.core.files.base import ContentFile
 import random
 from django.utils import timezone
-
 import qrcode
-
 from django.db.models import F, Count, Q
 
 @login_required

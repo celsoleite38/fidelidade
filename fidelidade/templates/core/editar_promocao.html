@@ -9,7 +9,7 @@
                 <h3>Editar Promoção: {{ promocao.nome }}</h3>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" id="promocaoForm">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
@@ -21,4 +21,22 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxSemPrazo = document.querySelector('input[name="sem_prazo"]');
+        const campoDataFim = document.querySelector('#div_id_data_fim'); // ID padrão do Crispy Forms
+
+        function toggleDataFim() {
+            if (checkboxSemPrazo.checked) {
+                campoDataFim.style.display = 'none';
+            } else {
+                campoDataFim.style.display = 'block';
+            }
+        }
+
+        checkboxSemPrazo.addEventListener('change', toggleDataFim);
+        toggleDataFim(); // Executa ao carregar a página
+    });
+</script>
 {% endblock %}
