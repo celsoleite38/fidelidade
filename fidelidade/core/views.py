@@ -84,13 +84,16 @@ def home(request):
             
             # Pontuações que o cliente já tem
             pontuacoes = Pontuacao.objects.filter(cliente=cliente)
-            
-            # Promoções disponíveis na cidade selecionada que o cliente ainda não participa
-            # ou que ele já participa mas ainda estão ativas
+            hoje = timezone.now().date()
+           
             promocoes_cidade = Promocao.objects.filter(
                 comercio__cidade=cidade,
                 ativa=True
+            ).filter(
+               
+                Q(sem_prazo=True) | Q(data_fim__gte=hoje) | Q(data_fim__isnull=True)
             ).exclude(id__in=pontuacoes.values_list('promocao_id', flat=True))
+            # --- FIM DA MUDANÇA ---
 
             return render(request, 'core/cliente_home.html', {
                 'cliente': cliente,
@@ -214,13 +217,9 @@ def ler_qr_code(request):
     return render(request, 'core/ler_qr_code.html')
 
 def processar_dados_qr_code(request):
-    """Processa dados de QR code do scanner JavaScript"""
     qr_data = request.POST.get('qr_data', '').strip()
     
-    print(f"=== NOVA LEITURA ===")
-    print(f"Usuário: {request.user.username}")
-    print(f"QR Code: {qr_data}")
-    
+
     try:
         # Verificar formato básico
         if not qr_data or not qr_data.startswith('promocao:'):
@@ -238,14 +237,15 @@ def processar_dados_qr_code(request):
         # Buscar promoção
         promocao = Promocao.objects.get(id=int(promocao_id), ativa=True)
         cliente = Cliente.objects.get(usuario=request.user)
-        
-        # Verificar datas
         hoje = timezone.now().date()
-        if promocao.data_inicio > hoje:
-            return JsonResponse({'success': False, 'error': f'Promoção inicia em {promocao.data_inicio}'})
         
-        if promocao.data_fim < hoje:
-            return JsonResponse({'success': False, 'error': f'Promoção expirou em {promocao.data_fim}'})
+        if promocao.data_inicio and promocao.data_inicio > hoje:
+            return JsonResponse({'success': False, 'error': f'Promoção inicia em {promocao.data_inicio.strftime("%d/%m/%Y")}'})
+        
+        
+        if not promocao.sem_prazo and promocao.data_fim:
+            if promocao.data_fim < hoje:
+                return JsonResponse({'success': False, 'error': f'Promoção expirou em {promocao.data_fim.strftime("%d/%m/%Y")}'})
         
         # Verificar se já existe pontuação
         pontuacao, created = Pontuacao.objects.get_or_create(
@@ -269,11 +269,6 @@ def processar_dados_qr_code(request):
         else:
             pontos_adicionados = 1
         
-        print(f"Pontos adicionados: {pontos_adicionados}")
-        print(f"Total: {pontuacao.pontos}/{promocao.pontos_necessarios}")
-        
-        # === NOVO CÓDIGO AQUI ===
-        # Verificar se atingiu a pontuação necessária para gerar código de resgate
         premio_disponivel = False
         codigo_resgate = None
         
@@ -319,33 +314,26 @@ def processar_dados_qr_code(request):
 # === ADICIONE ESTA FUNÇÃO NOVA ===
 def gerar_codigo_resgate(pontuacao):
     """Gera um código de resgate único e aleatório de 5 dígitos"""
-    import random
     import string
     import secrets
     
-    # 🔧 MELHORIA: Usar secrets para maior segurança criptográfica
-    # Gerar código único de 5 dígitos alfanumérico
+    attempts = 0
+    system_random = secrets.SystemRandom()
+    
     while True:
-        # 🔧 MELHORIA: Usar secrets.SystemRandom() para melhor aleatoriedade
-        system_random = secrets.SystemRandom()
+        attempts += 1
+        # Gerar código único de 5 dígitos (ou 6 se houver muitas colisões)
+        tamanho = 5 if attempts <= 10 else 6
+        
         codigo = ''.join(system_random.choices(
             string.ascii_uppercase + string.digits, 
-            k=5
+            k=k_size
         ))
         
-        # 🔧 MELHORIA: Adicionar verificação extra para evitar colisões
         if not Pontuacao.objects.filter(codigo_resgate=codigo).exists():
             pontuacao.codigo_resgate = codigo
             break
             
-        # 🔧 MELHORIA: Prevenção contra loop infinito (fallback)
-        # Se após 10 tentativas ainda houver conflito, tentar com mais caracteres
-        if attempts > 10:  # você precisaria adicionar um contador
-            codigo = ''.join(system_random.choices(
-                string.ascii_uppercase + string.digits, 
-                k=6  # aumenta para 6 caracteres temporariamente
-            ))
-    
     return codigo
 
 # views.py - adicione estas views

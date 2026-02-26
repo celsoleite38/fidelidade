@@ -99,16 +99,17 @@
                         <div class="card h-100 border-success">
                             <div class="card-body">
                                 <h4 class="card-title ">{{ promocao.comercio.nome_fantasia }}</h4>
-                                <h6 class="card-subtitle mb-2 text-muted">{{ promocao.nome }}</h6>
+                                <h6 class="card-subtitle mb-1 "><font color="yellow">{{ promocao.nome }}</h6>
                                 
-                                <p class="card-text">
+                                <p class="card-text mb-2 text-muted">
                                     {{ promocao.descricao|truncatewords:20 }}<br>
+                                     {{ promocao.comercio.endereco }}<br>
                                     <strong>Prêmio:</strong> {{ promocao.premio }}<br>
                                     <strong>Meta:</strong> {{ promocao.pontos_necessarios }} pontos
                                 </p>
                             </div>
                             <div class="card-footer bg-transparent border-success">
-                                <small class="text-muted">📍 {{ promocao.comercio.endereco }}</small>
+                                <small class="text-muted"><strong>Endereço:</strong>📍{{ promocao.comercio.endereco }}</small>
                             </div>
                         </div>
                     </div>
